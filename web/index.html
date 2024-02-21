@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disco Ball Controller</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .active {
+            background-color: #f44336;
+        }
+    </style>
+    <script>
+        let audioBrightnessActive = false; // Track if AUDIO_BRIGHTNESS is active
+
+        function setEffect(effect) {
+            fetch('/set_effect', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ effect: effect })
+            }).then(response => {
+                if (response.ok) {
+                    console.log('Effect set to ' + effect);
+                } else {
+                    console.error('Failed to set effect');
+                }
+            });
+        }
+
+        function updateButtonState() {
+            const audioBrightnessButton = document.getElementById('audioBrightnessButton');
+
+            if (audioBrightnessActive) {
+                audioBrightnessButton.classList.add('active');
+            } else {
+                audioBrightnessButton.classList.remove('active');
+            }
+        }
+
+            function toggleAudioBrightness() {
+        fetch('/toggle_audio_brightness', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(response => {
+            if (response.ok) {
+                // Update the button's appearance based on the response
+                response.json().then(data => {
+                    audioBrightnessActive = !audioBrightnessActive;  // Toggle the state based on the response
+                    updateButtonState();  // Update the button's appearance
+                    console.log(data.message);
+                });
+            } else {
+                console.error('Failed to toggle AUDIO_BRIGHTNESS');
+            }
+        });
+    }
+
+    </script>
+</head>
+<body>
+    <h1>Disco Ball Controller</h1>
+    <button class="button" onclick="setEffect('RANDOM_COLOR')">Random Color</button>
+    <button class="button" onclick="setEffect('BAND_LOOP_INDIVIDUAL')">Band Loop Individual</button>
+    <button class="button" onclick="setEffect('RAINBOW')">Rainbow</button>
+    <button class="button" onclick="setEffect('VERTICAL_RAINBOW')">Vertical Rainbow</button>
+    <button class="button" onclick="setEffect('AUDIO_REACTIVE')">Audio Reactive</button>
+    <button class="button" onclick="setEffect('VIDEO')">Video</button>
+    <button class="button" onclick="setEffect('ALL_HEXAGONS')">All Hexagons</button>
+    <button class="button" onclick="setEffect('HEXAGON_EACH_BAND')">Hexagon Each Band</button>
+    <button class="button" onclick="setEffect('YOUTUBE')">YouTube</button>
+    <button class="button" onclick="setEffect('YOUTUBE2')">YouTube</button>
+    <button class="button" onclick="setEffect('YOUTUBE3')">YouTube</button>
+
+    <button class="button" id="audioBrightnessButton" onclick="toggleAudioBrightness()">Audio Brightness</button>
+    <!-- Add more buttons or controls as needed -->
+</body>
+</html>
